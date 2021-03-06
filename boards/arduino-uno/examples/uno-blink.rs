@@ -50,9 +50,19 @@ fn main() -> ! {
     let mut buf = [0; 14];
     i2c.write_read(IMU_ADDR, &[0x3B], &mut buf).unwrap();
 
+    // convert data
+    // in the end we are always appending the second byte to the end of the first
+    // mathematically this operation is: a * 2^8 + b
+    let mut data = [0; 7];
+    for (idx, chunk) in buf.chunks_exact(2).enumerate() {
+        let a = chunk[0] as u16;
+        let b = chunk[1] as u16;
+        data[idx] = a << 8 | b;
+    }
+
     // report result over serial
     ufmt::uwrite!(&mut serial, "Read: ").void_unwrap();
-    for i in buf.iter() {
+    for i in data.iter() {
         ufmt::uwrite!(&mut serial, " {},", i).void_unwrap();
     }
     ufmt::uwrite!(&mut serial, "\r\n").void_unwrap();
