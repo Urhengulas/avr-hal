@@ -22,6 +22,14 @@ fn main() -> ! {
     let mut led = pins.d13.into_output(&mut pins.ddr);
     led.set_low().void_unwrap();
 
+    // Set up serial connection
+    let mut serial = arduino_uno::Serial::new(
+        dp.USART0,
+        pins.d0,
+        pins.d1.into_output(&mut pins.ddr),
+        57600.into_baudrate(),
+    );
+
     // Setup I²C-Controller
     let mut i2c = I2cMaster::<MHz16, _>::new(
         dp.TWI,
@@ -41,6 +49,13 @@ fn main() -> ! {
     // read data
     let mut buf = [0; 14];
     i2c.write_read(IMU_ADDR, &[0x3B], &mut buf).unwrap();
+
+    // report result over serial
+    ufmt::uwrite!(&mut serial, "Read: ").void_unwrap();
+    for i in buf.iter() {
+        ufmt::uwrite!(&mut serial, " {},", i).void_unwrap();
+    }
+    ufmt::uwrite!(&mut serial, "\r\n").void_unwrap();
 
     loop {}
 }
