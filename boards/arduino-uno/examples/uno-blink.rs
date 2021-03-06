@@ -11,6 +11,8 @@ use arduino_uno::{
 };
 use panic_halt as _;
 
+const IMU_ADDR: u8 = 0x68;
+
 #[arduino_uno::entry]
 fn main() -> ! {
     let dp = Peripherals::take().unwrap();
@@ -29,7 +31,7 @@ fn main() -> ! {
     );
 
     // Ping peripheral (gy-86) and set LED to high in case of success
-    if i2c.ping_slave(0x68, Direction::Read).unwrap() {
+    if i2c.ping_slave(IMU_ADDR, Direction::Read).unwrap() {
         led.set_high().void_unwrap();
     }
 
