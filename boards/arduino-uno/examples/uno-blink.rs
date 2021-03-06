@@ -1,12 +1,14 @@
 #![no_std]
 #![no_main]
 
-use arduino_uno::{prelude::*, Peripherals, Pins};
-use atmega328p_hal::{
-    clock::MHz16,
-    i2c::{Direction, I2cMaster},
+use arduino_uno::{
+    hal::{
+        clock::MHz16,
+        i2c::{Direction, I2cMaster},
+    },
+    prelude::*,
+    Peripherals, Pins,
 };
-use embedded_hal::digital::v2::OutputPin;
 use panic_halt as _;
 
 #[arduino_uno::entry]
