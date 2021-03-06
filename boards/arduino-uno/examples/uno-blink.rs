@@ -35,5 +35,12 @@ fn main() -> ! {
         led.set_high().void_unwrap();
     }
 
+    // wake MPU6050 up
+    i2c.write(IMU_ADDR, &[0x6B, 0]).unwrap();
+
+    // read data
+    let mut buf = [0; 14];
+    i2c.write_read(IMU_ADDR, &[0x3B], &mut buf).unwrap();
+
     loop {}
 }
