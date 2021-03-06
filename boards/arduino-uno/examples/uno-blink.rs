@@ -55,9 +55,12 @@ fn main() -> ! {
     // mathematically this operation is: a * 2^8 + b
     let mut data = [0; 7];
     for (idx, chunk) in buf.chunks_exact(2).enumerate() {
+        const SCALES: [u16; 7] = [16384, 16384, 16384, 1, 131, 131, 131];
+
         let a = chunk[0] as u16;
         let b = chunk[1] as u16;
-        data[idx] = a << 8 | b;
+
+        data[idx] = (a << 8 | b) / SCALES[idx];
     }
 
     // report result over serial
